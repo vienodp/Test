@@ -1,0 +1,50 @@
+<project name="MyBuild" default="AllTargets" basedir=".">
+
+<property name="build.dir" value="build"/>
+<property name="src.dir" value="src"/>
+<property name="junit.dir" value="src.test"/>
+<property name="dist.dir" value="dist"/>
+<property name="conf.dir" value="conf"/>
+<property name="misc.dir" value="misc"/>
+<property file="${conf.dir}/autoproduct.properties"/>
+
+<target name="clean">
+	<delete failonerror="false" includeEmptyDirs="true">
+	  	<fileset dir="${build.dir}/classes" />
+	  	<fileset dir="${misc.dir}/docs" />
+	  	<fileset dir="${dist.dir}" />
+	</delete>
+</target>
+
+<target name="prepare" depends="clean">
+	<mkdir dir="${build.dir}/classes/app" />
+	<mkdir dir="${misc.dir}/docs" />
+	<mkdir dir="${dist.dir}" />
+</target>
+
+<target name="compile" depends="prepare">
+	<javac srcdir="${src.dir}" destdir="${build.dir}/classes/app" />
+<!--	<javadoc sourcepath="src" destdir="${misc.dir}/docs" /> -->
+</target>
+
+<target name="build-jar">
+	<manifest file="MANIFEST.MF">
+		<attribute name="Built-By" value="Test"/>
+	</manifest>
+	
+	<buildnumber file="${conf.dir}/autoproduct.properties"/>
+	
+	<jar destfile="AutoProduct.jar" includesfile="MANIFEST.MF">
+	</jar>
+</target>
+
+<target name="dist">
+	<zip destfile="${dist.dir}/AutoProduct_Release_1.zip" >
+		<fileset dir="${misc.dir}"/>
+		<fileset dir="." includes="AutoProduct.jar"/>
+	</zip>
+</target>
+
+<target name="AllTargets" depends="compile, build-jar, dist" />
+
+</project>
